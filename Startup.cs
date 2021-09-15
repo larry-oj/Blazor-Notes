@@ -35,7 +35,7 @@ namespace Blazor_Notes
 
             services.AddDbContext<NotesDbContext>();
 
-            
+            services.AddScoped<INotesRepo, NotesRepo>();
         }
 
 
