@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Blazor_Notes.Options;
+using Blazor_Notes.Services;
 
 namespace Blazor_Notes
 {
@@ -31,6 +32,10 @@ namespace Blazor_Notes
 
             // Config pattern
             services.Configure<DatabaseOptions>(Configuration.GetSection(DatabaseOptions.Database));
+
+            services.AddDbContext<NotesDbContext>();
+
+            
         }
 
 
