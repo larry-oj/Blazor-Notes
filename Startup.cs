@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Blazor_Notes.Options;
 
 namespace Blazor_Notes
 {
@@ -27,6 +28,9 @@ namespace Blazor_Notes
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+
+            // Config pattern
+            services.Configure<DatabaseOptions>(Configuration.GetSection(DatabaseOptions.Database));
         }
 
 
