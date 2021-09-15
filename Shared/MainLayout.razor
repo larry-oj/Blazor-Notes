@@ -3,7 +3,9 @@
 <div class="page">
     <div class="main">
         <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+            <button type="button" class="btn btn-primary navbar-btn">New note</button>
+            <input class="form-control navbar-itm" placeholder="Enter search term">
+            Total notes: @NotesCount
         </div>
 
         <div class="content px-4">
@@ -11,3 +13,7 @@
         </div>
     </div>
 </div>
+
+@code {
+    public int NotesCount { get; set; } = 0;
+}
