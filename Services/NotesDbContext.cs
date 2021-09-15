@@ -32,17 +32,19 @@ namespace Blazor_Notes.Services
         {
             modelBuilder.HasAnnotation("Relational:Collation", "English_United States.1252");
 
+            modelBuilder.UseSerialColumns();
+
             modelBuilder.Entity<Note>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("notes");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .UseIdentityAlwaysColumn();
 
                 entity.Property(e => e.Content)
                     .IsRequired()
                     .HasColumnName("content");
-
-                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Title)
                     .IsRequired()
