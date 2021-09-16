@@ -14,6 +14,6 @@ namespace Blazor_Notes.Services
         Task<bool> DeleteNoteAsync(Note note);
 
         // Note retrieving
-        Task<IEnumerable<Note>> GetAllNotesAsync();
+        IEnumerable<Note> GetAllNotes();
     }
 }

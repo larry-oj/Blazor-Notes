@@ -43,9 +43,9 @@ namespace Blazor_Notes.Services
         }
 
 
-        public async Task<IEnumerable<Note>> GetAllNotesAsync()
+        public IEnumerable<Note> GetAllNotes()
         {
-            return await _context.Notes.AsNoTracking().ToListAsync();
+            return _context.Notes.AsNoTracking().ToList();
         }
     }
 }
