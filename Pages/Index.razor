@@ -1,5 +1,22 @@
 @page "/"
+@inject INotesRepo _repo
 
-<h1>Hello, world!</h1>
+@foreach (var note in _notes)
+{
+    <NoteComponent Note="note"></NoteComponent>
+}
 
-Welcome to your new app.
+
+@code {
+    private List<Note> _notes;
+
+    [CascadingParameter]
+    public EventCallback<int> NotesCountEvent { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _notes = _repo.GetAllNotes().ToList();
+        NotesCountEvent.InvokeAsync(_notes.Count);
+    }
+}

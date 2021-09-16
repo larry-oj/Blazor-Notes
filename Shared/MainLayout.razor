@@ -5,15 +5,23 @@
         <div class="top-row px-4">
             <button type="button" class="btn btn-info navbar-btn">New note</button>
             <input class="form-control navbar-itm" placeholder="Enter search term">
-            Total notes: @NotesCount
+            Total notes: @_notesCount
         </div>
 
         <div class="content px-4">
-            @Body
+            <CascadingValue Value="NotesCountEvent">
+                @Body
+            </CascadingValue>
         </div>
     </div>
 </div>
 
 @code {
-    public int NotesCount { get; set; } = 0;
+    private int _notesCount { get; set; }
+
+    public EventCallback<int> NotesCountEvent => EventCallback.Factory.Create<int>(this, SetNotesCount);
+    private void SetNotesCount(int count)
+    {
+        _notesCount = count;
+    }
 }
