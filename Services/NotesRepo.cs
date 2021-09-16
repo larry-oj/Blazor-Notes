@@ -43,9 +43,12 @@ namespace Blazor_Notes.Services
         }
 
 
+        // Idealy it should work async. However it conflicts: it attempts to use model before it is created.
+        // It needs to await model creation, and only afterwards get data. It will take N amount of time
+        // so i won't focus on it now
         public IEnumerable<Note> GetAllNotes()
         {
-            return _context.Notes.AsNoTracking().ToList();
+            return _context.Notes.AsNoTracking().ToList().OrderBy(n => n.Title);
         }
     }
 }
