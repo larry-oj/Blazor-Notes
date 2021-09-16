@@ -39,7 +39,7 @@ namespace Blazor_Notes
         }
 
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, NotesDbContext context)
         {
             if (env.IsDevelopment())
             {
@@ -61,6 +61,8 @@ namespace Blazor_Notes
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
+
+            //context.SeedDataContext();
         }
     }
 }
