@@ -1,0 +1,12 @@
+<div class="card bg-light mb-3">
+    <div class="card-body body">
+        <p style="margin-right: auto">@Note.Title</p>
+        <button type="button" class="btn btn-info" style="margin-right: 1rem">Hide note</button>
+        <button type="button" class="btn btn-info">Edit note</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Note Note { get; set; }
+}
