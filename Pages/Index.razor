@@ -17,7 +17,7 @@
         {
             <NoteComponent Note="note"></NoteComponent>
         }
-        else if (Regex.IsMatch(note.Title, SearchQuery) || Regex.IsMatch(note.Content, SearchQuery))
+        else if (Regex.IsMatch(note.Title, SearchQuery, RegexOptions.IgnoreCase) || Regex.IsMatch(note.Content, SearchQuery, RegexOptions.IgnoreCase))
         {
             <NoteComponent Note="note"></NoteComponent>
         }
