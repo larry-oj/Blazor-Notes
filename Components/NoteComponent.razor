@@ -1,14 +1,110 @@
-<div class="card bg-light mb-3">
-    <div class="card-body note-body">
-        @Note.Title
-        <div style="margin-left: auto;">
-            <button type="button" class="btn btn-info" style="margin-right: 1rem">Show note</button>
-            <button type="button" class="btn btn-info">Edit note</button>
+@inject INotesRepo _repo
+
+@switch (_noteState)
+{
+    default:
+    case NoteState.Regular:
+        <div class="card bg-light mb-3">
+            <div class="card-body note">
+                @Note.Title
+                <div style="margin-left: auto;">
+                    <button type="button" class="btn btn-info" style="margin-right: 1rem" 
+                        @onclick="(() => ChangeState(NoteState.Extended))">Show note</button>
+                    <button type="button" class="btn btn-info"
+                        @onclick="(() => ChangeState(NoteState.Edit))">Edit note</button>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
+        break;
+
+    case NoteState.Extended:
+        <div class="card mb-3">
+            <div class="card-header note">
+                @Note.Title
+                <div style="margin-left: auto;">
+                    <button type="button" class="btn btn-info" style="margin-right: 1rem"
+                        @onclick="(() => ChangeState(NoteState.Regular))">Hide note</button>
+                    <button type="button" class="btn btn-info"
+                        @onclick="(() => ChangeState(NoteState.Edit))">Edit note</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <p class="card-text">@Note.Content</p>
+            </div>
+        </div>
+        break;
+    
+    case NoteState.Edit:
+        <div class="card mb-3">
+            <div class="card-header note">
+                <div style="width: 30%">
+                    <input type="text" class="form-control" @bind-value="_noteEdited.Title">
+                </div>
+                <div style="margin-left: auto;">
+                    <button type="button" class="btn btn-info" style="margin-right: 1rem"
+                        @onclick="(Save)">Save note</button>
+                    <button type="button" class="btn btn-info"
+                        @onclick="(CancelEdit)">Cancel</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <textarea type="text" rows=5 class="form-control" @onchange="ChangeContent">@_noteEdited.Content</textarea>
+            </div>
+        </div>
+        break;
+}
+
 
 @code {
+    private enum NoteState // helps to configure which "card" to render
+    {
+        Regular,
+        Extended,
+        Edit
+    }
+
+    private NoteState _noteState;
+    private Note _noteEdited;       // Stores edited verion of a current note
+
+
     [Parameter]
     public Note Note { get; set; }
+
+    private void ChangeContent(ChangeEventArgs args)    // Helps to bind data to <textarea>
+        => _noteEdited.Content = args.Value.ToString();
+
+    private void ChangeState(NoteState state)
+    {
+        _noteState = state;
+        
+        StateHasChanged();
+    }
+
+    private void CancelEdit()
+    {
+        _noteEdited = (Note)Note.Clone();   // Erases changes from _noteEdited
+        
+        ChangeState(NoteState.Extended);
+    }
+
+    private async Task Save()
+    {
+        // Save changes to the original Note obj
+        Note.Title = _noteEdited.Title;     
+        Note.Content = _noteEdited.Content;
+
+        // Update data in the db
+        await _repo.EditNoteAsync(Note);
+
+        ChangeState(NoteState.Extended);
+    }
+
+    
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _noteState = NoteState.Regular;
+        _noteEdited = (Note)Note.Clone();
+    }
 }

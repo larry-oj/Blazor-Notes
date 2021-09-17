@@ -49,8 +49,9 @@ a, .btn-link {
         top: 0.5rem;
     }
 
-.note-body {
+.note {
     display: flex; 
     justify-content: flex-start; 
     align-items: center;
+    height: 5rem;
 }
