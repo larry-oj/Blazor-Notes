@@ -3,14 +3,19 @@
 <div class="page">
     <div class="main">
         <div class="top-row px-4">
-            <button type="button" class="btn btn-info navbar-btn">New note</button>
+            <button type="button" class="btn btn-info navbar-btn"
+                @onclick="(() => _newNote = true)">New note</button>
             <input class="form-control navbar-itm" placeholder="Enter search term">
             Total notes: @_notesCount
         </div>
 
         <div class="content px-4">
-            <CascadingValue Value="NotesCountEvent">
-                @Body
+            <CascadingValue Value="NotesCountEvent"> 
+                <CascadingValue Value="_newNote">
+                    <CascadingValue Value="AddNoteStateEvent">
+                        @Body
+                    </CascadingValue>
+                </CascadingValue>
             </CascadingValue>
         </div>
     </div>
@@ -19,9 +24,24 @@
 @code {
     private int _notesCount { get; set; }
 
-    public EventCallback<int> NotesCountEvent => EventCallback.Factory.Create<int>(this, SetNotesCount);
-    private void SetNotesCount(int count)
+    private bool _newNote;      // Determiner of a Add note "card" render
+
+
+    public EventCallback<int> NotesCountEvent       // Event which will change the notes count without accesing database
+        => EventCallback.Factory.Create<int>(this, SetNotesCount);
+
+    public EventCallback<bool> AddNoteStateEvent    // Event which will change local variable (determiner of a new note "card")
+        => EventCallback.Factory.Create<bool>(this, AddNoteState);
+    
+
+    private void AddNoteState(bool condition)
     {
-        _notesCount = count;
+        _newNote = condition;
+    }
+
+
+    private void SetNotesCount(int amount)
+    {
+        _notesCount += amount;
     }
 }

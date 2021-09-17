@@ -1,6 +1,6 @@
 @inject INotesRepo _repo
 
-@switch (_noteState)
+@switch (CurrentState)
 {
     default:
     case NoteState.Regular:
@@ -38,7 +38,8 @@
         <div class="card mb-3">
             <div class="card-header note">
                 <div style="width: 30%">
-                    <input type="text" class="form-control" @bind-value="_noteEdited.Title">
+                    <input type="text" class="form-control" 
+                        @bind-value="_noteEdited.Title">
                 </div>
                 <div style="margin-left: auto;">
                     <button type="button" class="btn btn-info" style="margin-right: 1rem"
@@ -48,7 +49,29 @@
                 </div>
             </div>
             <div class="card-body">
-                <textarea type="text" rows=5 class="form-control" @onchange="ChangeContent">@_noteEdited.Content</textarea>
+                <textarea type="text" rows=5 class="form-control" 
+                    @onchange="ChangeContent">@_noteEdited.Content</textarea>
+            </div>
+        </div>
+        break;
+    
+    case NoteState.New:
+        <div class="card mb-3">
+            <div class="card-header note">
+                <div style="width: 30%">
+                    <input type="text" class="form-control" placeholder="Title" 
+                        @bind-value="_noteEdited.Title">
+                </div>
+                <div style="margin-left: auto;">
+                    <button type="button" class="btn btn-info" style="margin-right: 1rem"
+                        @onclick="(Add)">Add note</button>
+                    <button type="button" class="btn btn-info"
+                        @onclick="(CancelAdd)">Cancel</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <textarea type="text" rows=5 class="form-control" placeholder="Content"
+                    @onchange="ChangeContent">@_noteEdited.Content</textarea>
             </div>
         </div>
         break;
@@ -56,27 +79,46 @@
 
 
 @code {
-    private enum NoteState // helps to configure which "card" to render
+    
+    private Note _noteEdited;       // Stores edited verion of a current note
+
+    public enum NoteState           // helps to configure which "card" to render
     {
         Regular,
         Extended,
-        Edit
+        Edit,
+        New
     }
 
-    private NoteState _noteState;
-    private Note _noteEdited;       // Stores edited verion of a current note
+    [Parameter]
+    public NoteState CurrentState { get; set; } = NoteState.Regular;    // Current card layout
+
+    [Parameter]
+    public Note Note { get; set; }      // Note retrieved from db
 
 
     [Parameter]
-    public Note Note { get; set; }
+    public EventCallback<Note> AddNote { get; set; }        // Adds note to list without accessing the db
 
-    private void ChangeContent(ChangeEventArgs args)    // Helps to bind data to <textarea>
+    [CascadingParameter]
+    public EventCallback<int> NotesCountEvent { get; set; } // Change the notes count without accesing database
+
+    [Parameter]
+    public EventCallback CancelNewNote { get; set; }        // Cancels adding new note
+
+    private void ChangeContent(ChangeEventArgs args)        // Helps to bind data to <textarea>
         => _noteEdited.Content = args.Value.ToString();
 
     private void ChangeState(NoteState state)
     {
-        _noteState = state;
+        CurrentState = state;
         
+        // Without the next line it breaks editing notes for some reason...
+        // It took some time to figure out i need this line here but
+        // I am sure there is a better way of fixing it but it will
+        // require a lot of time so I won't focus on it right now
+        _noteEdited = (Note)Note.Clone();   
+
         StateHasChanged();
     }
 
@@ -99,12 +141,36 @@
         ChangeState(NoteState.Extended);
     }
 
+    private async Task Add()
+    {
+        // Save changes to the original Note obj
+        Note.Title = _noteEdited.Title;
+        Note.Content = _noteEdited.Content;
+
+        // Add data to the db
+        await _repo.AddNoteAsync(Note);
+
+        // Add note to list on parent (index) page
+        await AddNote.InvokeAsync(Note);
+
+        // Increase notes count
+        await NotesCountEvent.InvokeAsync(1);
+
+        StateHasChanged();
+    }
+
+    private async Task CancelAdd()
+    {
+        _noteEdited = (Note)Note.Clone();   // Erases changes from _noteEdited
+        
+        await CancelNewNote.InvokeAsync();  // Cancel adding new note
+    }
+
     
     protected override void OnInitialized()
     {
         base.OnInitialized();
 
-        _noteState = NoteState.Regular;
         _noteEdited = (Note)Note.Clone();
     }
 }

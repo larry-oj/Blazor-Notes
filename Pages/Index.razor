@@ -1,22 +1,69 @@
 @page "/"
 @inject INotesRepo _repo
 
-@foreach (var note in _notes)
+@if (NewNote)
 {
-    <NoteComponent Note="note"></NoteComponent>
+    <NoteComponent Note="(new Note())" 
+        CurrentState="@NoteComponent.NoteState.New" 
+        AddNote="AddNoteToNotes" 
+        CancelNewNote="CancelAdd"></NoteComponent>
+}
+
+@if (_notes != null)
+{
+    @foreach (var note in _notes)
+    {
+        <NoteComponent Note="note"></NoteComponent>
+    }
 }
 
 
 @code {
-    private List<Note> _notes;
+    private List<Note> _notes;          // List of all notes
+
 
     [CascadingParameter]
-    public EventCallback<int> NotesCountEvent { get; set; }
+    public bool NewNote { get; set; }   // Determiner of Add note card render
+
+    [CascadingParameter]
+    public EventCallback<int> NotesCountEvent { get; set; }     // Change the notes count without accesing database
+
+    [CascadingParameter]
+    public EventCallback<bool> ChangeAddNoteState { get; set; } // Change determiner value of a parent component (MainLayout)
+        
+
+    public EventCallback<Note> AddNoteToNotes => EventCallback.Factory.Create<Note>(this, AddNote); // Event that adds note to list without accessing the db
+    public EventCallback CancelAdd => EventCallback.Factory.Create(this, CancelNewNote);            // Event that cancels adding new note
+    
+
+    private void AddNote(Note note)
+    {
+        // Add note to on-screen list
+        _notes.Add(note);
+        _notes = _notes.OrderBy(n => n.Title).ToList();
+
+        // Hide new note card
+        CancelNewNote();
+    }
+
+    private void CancelNewNote()    // Hides new note card
+    {
+        ChangeAddNoteState.InvokeAsync(false);
+
+        StateHasChanged();
+    }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        _notes = _repo.GetAllNotes().ToList();
-        NotesCountEvent.InvokeAsync(_notes.Count);
+
+        // Get all notes from db
+        _notes = _repo.GetAllNotes();
+        if (_notes != null)
+        {
+            _notes = _notes.OrderBy(n => n.Title).ToList();
+        }
+
+        NotesCountEvent.InvokeAsync(_notes.Count);  // Set initial note count value
     }
 }
