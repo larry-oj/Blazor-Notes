@@ -5,9 +5,7 @@
         <div class="top-row px-4">
             <button type="button" class="btn btn-info navbar-btn"
                 @onclick="(() => _newNote = true)">New note</button>
-            <input class="form-control navbar-itm" placeholder="Enter search term"
-                @bind-value="_searchText"
-                @bind-value:event="oninput">
+            <input class="form-control navbar-itm" placeholder="Enter search term">
             Total notes: @_notesCount
         </div>
 
@@ -15,9 +13,7 @@
             <CascadingValue Value="NotesCountEvent"> 
                 <CascadingValue Value="_newNote">
                     <CascadingValue Value="AddNoteStateEvent">
-                        <CascadingValue Value="_searchText">
-                            @Body
-                        </CascadingValue>
+                        @Body
                     </CascadingValue>
                 </CascadingValue>
             </CascadingValue>
@@ -29,8 +25,6 @@
     private int _notesCount { get; set; }
 
     private bool _newNote;      // Determiner of a Add note "card" render
-
-    private string _searchText; // Contains search query
 
 
     public EventCallback<int> NotesCountEvent       // Event which will change the notes count without accesing database

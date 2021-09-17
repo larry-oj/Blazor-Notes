@@ -13,14 +13,7 @@
 {
     @foreach (var note in _notes)
     {
-        if (SearchQuery == null || SearchQuery == "")
-        {
-            <NoteComponent Note="note"></NoteComponent>
-        }
-        else if (Regex.IsMatch(note.Title, SearchQuery) || Regex.IsMatch(note.Content, SearchQuery))
-        {
-            <NoteComponent Note="note"></NoteComponent>
-        }
+        <NoteComponent Note="note"></NoteComponent>
     }
 }
 
@@ -37,8 +30,6 @@
 
     [CascadingParameter]
     public EventCallback<bool> ChangeAddNoteState { get; set; } // Change determiner value of a parent component (MainLayout)
-    [CascadingParameter]
-    public string SearchQuery { get; set; }     // Contains search query
         
 
     public EventCallback<Note> AddNoteToNotes => EventCallback.Factory.Create<Note>(this, AddNote); // Event that adds note to list without accessing the db
