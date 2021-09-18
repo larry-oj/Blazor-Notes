@@ -4,13 +4,13 @@
 {
     default:
     case NoteState.Regular:
-        <div class="card bg-light mb-3">
+        <div id="notecard" class="card bg-light mb-3">
             <div class="card-body note">
-                @Note.Title
+                <span>@Note.Title</span>
                 <div style="margin-left: auto;">
-                    <button type="button" class="btn btn-info" style="margin-right: 1rem" 
+                    <button id="shownote" type="button" class="btn btn-info" style="margin-right: 1rem" 
                         @onclick="(() => ChangeState(NoteState.Extended))">Show note</button>
-                    <button type="button" class="btn btn-info"
+                    <button id="editnote" type="button" class="btn btn-info"
                         @onclick="(() => ChangeState(NoteState.Edit))">Edit note</button>
                 </div>
             </div>
@@ -18,59 +18,59 @@
         break;
 
     case NoteState.Extended:
-        <div class="card mb-3">
+            <div id="notecard" class="card mb-3">
             <div class="card-header note">
-                @Note.Title
+                <span>@Note.Title</span>
                 <div style="margin-left: auto;">
-                    <button type="button" class="btn btn-info" style="margin-right: 1rem"
+                    <button id="hidenote" type="button" class="btn btn-info" style="margin-right: 1rem"
                         @onclick="(() => ChangeState(NoteState.Regular))">Hide note</button>
-                    <button type="button" class="btn btn-info"
+                    <button id="editnote" type="button" class="btn btn-info"
                         @onclick="(() => ChangeState(NoteState.Edit))">Edit note</button>
                 </div>
             </div>
-            <div class="card-body">
+            <div id="notetext" class="card-body">
                 <p class="card-text">@Note.Content</p>
             </div>
         </div>
         break;
     
     case NoteState.Edit:
-        <div class="card mb-3">
+        <div id="notecard" class="card mb-3">
             <div class="card-header note">
                 <div style="width: 30%">
-                    <input type="text" class="form-control" 
+                    <input id="edittitle" type="text" class="form-control" 
                         @bind-value="_noteEdited.Title">
                 </div>
                 <div style="margin-left: auto;">
-                    <button type="button" class="btn btn-info" style="margin-right: 1rem"
+                    <button id="savenote" type="button" class="btn btn-info" style="margin-right: 1rem"
                         @onclick="(Save)">Save note</button>
-                    <button type="button" class="btn btn-info"
+                    <button id="cancelnote" type="button" class="btn btn-info"
                         @onclick="(CancelEdit)">Cancel</button>
                 </div>
             </div>
             <div class="card-body">
-                <textarea type="text" rows=5 class="form-control" 
+                <textarea id="editcontent" type="text" rows=5 class="form-control" 
                     @onchange="ChangeContent">@_noteEdited.Content</textarea>
             </div>
         </div>
         break;
     
     case NoteState.New:
-        <div class="card mb-3">
+        <div id="notecard" class="card mb-3">
             <div class="card-header note">
                 <div style="width: 30%">
-                    <input type="text" class="form-control" placeholder="Title" 
+                    <input id="newnotetitle" type="text" class="form-control" placeholder="Title" 
                         @bind-value="_noteEdited.Title">
                 </div>
                 <div style="margin-left: auto;">
-                    <button type="button" class="btn btn-info" style="margin-right: 1rem"
+                    <button id="addnote" type="button" class="btn btn-info" style="margin-right: 1rem"
                         @onclick="(Add)">Add note</button>
-                    <button type="button" class="btn btn-info"
+                    <button id="cancelnote" type="button" class="btn btn-info"
                         @onclick="(CancelAdd)">Cancel</button>
                 </div>
             </div>
             <div class="card-body">
-                <textarea type="text" rows=5 class="form-control" placeholder="Content"
+                <textarea id="newnotecontent" type="text" rows=5 class="form-control" placeholder="Content"
                     @onchange="ChangeContent">@_noteEdited.Content</textarea>
             </div>
         </div>

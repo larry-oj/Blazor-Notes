@@ -2,10 +2,10 @@
 
 <div class="page">
     <div class="main">
-        <div class="top-row px-4">
-            <button type="button" class="btn btn-info navbar-btn"
+        <div id="navmenu" class="top-row px-4">
+            <button id="newnotebutton" type="button" class="btn btn-info navbar-btn"
                 @onclick="(() => _newNote = true)">New note</button>
-            <input class="form-control navbar-itm" placeholder="Enter search term"
+            <input id="searchbar" class="form-control navbar-itm" placeholder="Enter search term"
                 @bind-value="_searchText"
                 @bind-value:event="oninput">
             Total notes: @_notesCount
