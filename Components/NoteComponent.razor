@@ -113,10 +113,10 @@
     {
         CurrentState = state;
         
-        // Without the next line it breaks editing notes for some reason...
-        // It took some time to figure out i need this line here but
-        // I am sure there is a better way of fixing it but it will
-        // require a lot of time so I won't focus on it right now
+        // Without the next line it breaks editing notes.
+        // I am sure it is related to rendering note containers, as
+        // it causes note data to "shift".
+        // The way of fixing it is resetting _noteEdited data.
         _noteEdited = (Note)Note.Clone();   
 
         StateHasChanged();

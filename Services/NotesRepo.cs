@@ -44,8 +44,9 @@ namespace Blazor_Notes.Services
 
 
         // Idealy it should work async. However it conflicts: it attempts to use model before it is created.
-        // It needs to await model creation, and only afterwards get data. It will take N amount of time
-        // so i won't focus on it now
+        // I assume it needs to await model creation, and only afterwards get data. I have never ever encountered this
+        // problem before so right now I am clueless why does this happen, as it always worked perfectrly fine
+        // with MySQL databases. It will take N amount of time to find a fix for it so I will leave it as is for now
         public List<Note> GetAllNotes()
         {
             return _context.Notes.AsNoTracking().ToList();
